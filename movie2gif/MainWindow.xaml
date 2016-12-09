@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:movie2gif"
         mc:Ignorable="d"
-        Title="movie2gif" Height="260.6" Width="475.83">
+        Title="movie2gif" Height="260.6" Width="475.83" Icon="icon.ico">
   <StackPanel Orientation="Vertical" Margin="8,8,8,8">
     <Grid>
       <Grid.RowDefinitions>
