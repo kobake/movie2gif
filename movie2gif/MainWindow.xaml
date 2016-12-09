@@ -5,8 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:movie2gif"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="movie2gif" Height="260.6" Width="475.83">
+  <StackPanel Orientation="Vertical" Margin="8,8,8,8">
     <Grid>
-        
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="8" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="8" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="70" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="36" />
+      </Grid.ColumnDefinitions>
+      
+      <Label Grid.Row="0" Grid.Column="0" x:Name="label" Content="InputMovie" VerticalAlignment="Center"/>
+      <TextBox Grid.Row="0" Grid.Column="1" x:Name="InputFilePath" VerticalAlignment="Stretch" Text="...\*.mp4" />
+      <Button Grid.Row="0" Grid.Column="2" x:Name="InputFileButton" Content="..." VerticalAlignment="Stretch" />
+
+      <Label Grid.Row="2"  Grid.Column="0" x:Name="label2" Content="OutputGif" VerticalAlignment="Center"/>
+      <TextBox Grid.Row="2"  Grid.Column="1" x:Name="OutputFilePath" VerticalAlignment="Stretch"  Text="...\*.gif" />
+      <Button Grid.Row="2"  Grid.Column="2" x:Name="OutputFileButton" Content="..." VerticalAlignment="Stretch"  />
     </Grid>
+    <StackPanel Orientation="Horizontal">
+      <Label Content="FPS" VerticalAlignment="Stretch"/>
+      <TextBox  VerticalAlignment="Stretch" Text="8" Width="50" VerticalContentAlignment="Center" />
+      <Label Content="Width" VerticalAlignment="Center" Margin="10,0,0,0"/>
+      <TextBox  VerticalAlignment="Stretch"  Text="800" Width="100" VerticalContentAlignment="Center"  />
+    </StackPanel>
+    <Button x:Name="ConvertButton" Content="Convert" Margin="0,8,0,0" Height="24" />
+    <TextBox x:Name="LogText" VerticalAlignment="Bottom" Height="Auto" Margin="0,8,0,0">aaaaa</TextBox>
+  </StackPanel>
 </Window>
