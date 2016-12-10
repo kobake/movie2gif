@@ -1,4 +1,5 @@
-﻿using MediaToolkit;
+﻿using Accord.Video.FFMPEG;
+using MediaToolkit;
 using MediaToolkit.Model;
 using MediaToolkit.Options;
 using Microsoft.Win32;
@@ -97,20 +98,34 @@ namespace movie2gif
 
         private void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
-            Log("doing");
-            var input = new MediaFile { Filename = InputFilePath.Text };
-            var output = new MediaFile { Filename = OutputFilePath.Text };
-            var conversionOptions = new ConversionOptions
+            if (false)
             {
-                MaxVideoDuration = TimeSpan.FromSeconds(30),
-                VideoAspectRatio = VideoAspectRatio.R16_9,
-                VideoSize = VideoSize.Hd1080,
-                AudioSampleRate = AudioSampleRate.Hz44100
-            };
-            using (var engine = new Engine())
-            {
-                engine.Convert(input, output, conversionOptions);
+                var input = new MediaFile { Filename = InputFilePath.Text };
+                var output = new MediaFile { Filename = OutputFilePath.Text };
+                var conversionOptions = new ConversionOptions
+                {
+                    MaxVideoDuration = TimeSpan.FromSeconds(30),
+                    VideoAspectRatio = VideoAspectRatio.R16_9,
+                    VideoSize = VideoSize.Hd1080,
+                    AudioSampleRate = AudioSampleRate.Hz44100
+                };
+                using (var engine = new Engine())
+                {
+                    engine.Convert(input, output, conversionOptions);
+                }
             }
+            else
+            {
+                /*var source = new VideoFileSource(InputFilePath.Text);
+                source.FrameInterval = 8;
+                source.Source.
+
+                var reader = new VideoFileReader();
+                reader.FrameRate = 8;
+                reader.Open(InputFilePath.Text);
+                */
+            }
+            Log("doing");
             Log("done");
         }
     }
