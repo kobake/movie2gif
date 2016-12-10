@@ -19,7 +19,7 @@ namespace movie2gif.Models
             {
                 var ffmpeg = new NReco.VideoConverter.FFMpegConverter();
                 ffmpeg.LogReceived += (object sender, FFMpegLogEventArgs args) => {
-                    Console.WriteLine(">>>" + args.Data);
+                    // Console.WriteLine(">>>" + args.Data);
                     var m = Regex.Match(args.Data, @", ([0-9]+)x[0-9]+");
                     if (m.Success)
                     {

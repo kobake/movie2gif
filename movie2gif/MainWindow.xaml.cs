@@ -25,9 +25,14 @@ namespace movie2gif
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string m_tmpDirectory;
         public MainWindow()
         {
             InitializeComponent();
+
+            // {exeディレクトリ}/.tmp をtmpディレクトリとして扱う.
+            m_tmpDirectory = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), ".tmp");
+            Directory.CreateDirectory(m_tmpDirectory);
         }
 
         private void Log(string text, bool lf = true)
@@ -50,7 +55,7 @@ namespace movie2gif
             dialog.CheckFileExists = true;
             dialog.CheckPathExists = true;
             bool? ret = dialog.ShowDialog();
-            if(ret == true)
+            if (ret == true)
             {
                 InputFilePath.Text = dialog.FileName;
                 GenerateOutputFilePath();
@@ -101,13 +106,20 @@ namespace movie2gif
         private void GenerateOutputFilePath()
         {
             int w = Ffmpeg.GetWidth(InputFilePath.Text);
-            if(w != 0)
+            if (w != 0)
             {
                 OutputWidth.Text = w + "";
             }
             OutputFilePath.Text = Regex.Replace(InputFilePath.Text, @"\.[A-Za-z0-9_]+$", ".gif");
         }
 
+        class ConvertParam
+        {
+            public string inputfile;
+            public string outputfile;
+            public int fps;
+            public int width;
+        }
 
         private bool m_doing = false;
         private void ConvertButton_Click(object sender, RoutedEventArgs e)
@@ -116,22 +128,32 @@ namespace movie2gif
             ConvertButton.IsEnabled = false;
             m_doing = true;
 
+            LogText.Text = "";
             Log("doing");
-            Task.Run(()=> {
+            var param = new ConvertParam
+            {
+                inputfile = InputFilePath.Text,
+                outputfile = OutputFilePath.Text,
+                fps = int.Parse(OutputFps.Text),
+                width = int.Parse(OutputWidth.Text)
+            };
+            Task.Run(() =>
+            {
                 try
                 {
-                    Convert();
+                    Convert(param);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Error: " + ex.Message);
+                    Log("\nError: " + ex.Message);
                 }
                 finally
                 {
                     OnConvertFinished();
                 }
             });
-            Task.Run(()=>{
+            Task.Run(() =>
+            {
                 while (true)
                 {
                     Log(".", false);
@@ -142,26 +164,37 @@ namespace movie2gif
         }
         private void OnConvertFinished()
         {
-            ConvertButton.Dispatcher.Invoke(() => {
+            ConvertButton.Dispatcher.Invoke(() =>
+            {
                 ConvertButton.IsEnabled = true;
                 m_doing = false;
                 Log("done");
             });
-        } 
+        }
 
-        private static void Convert()
+        private void Convert(ConvertParam param)
         {
-            Directory.SetCurrentDirectory(@"C:\_tmp\New folder");
-            Console.WriteLine(Directory.GetCurrentDirectory());
             var ffmpeg = new NReco.VideoConverter.FFMpegConverter();
             try
             {
-                ffmpeg.Invoke(@"-y -i ""C:\_tmp\New folder\a.mp4"" -vf fps=8,scale=1024:-1:flags=lanczos,palettegen ""C:\_tmp\New folder\palette.png""");
-                ffmpeg.Invoke(@"-y -i ""C:\_tmp\New folder\a.mp4"" -i ""C:\_tmp\New folder\palette.png"" -filter_complex ""fps=8,scale=1024:-1:flags=lanczos[x];[x][1:v]paletteuse"" ""C:\_tmp\New folder\output.gif""");
+                // 仮ファイル
+                string tmp_outputfile = Path.Combine(m_tmpDirectory, Path.GetFileName(param.outputfile));
+                string tmp_palettefile = Path.Combine(m_tmpDirectory, "palette.png");
+
+                // 変換
+                ffmpeg.Invoke(string.Format(@"-y -i ""{0}"" -vf fps={1},scale={2}:-1:flags=lanczos,palettegen ""{3}""", param.inputfile, param.fps, param.width, tmp_palettefile));
+                ffmpeg.Invoke(string.Format(@"-y -i ""{0}"" -i ""{1}"" -filter_complex ""fps={2},scale={3}:-1:flags=lanczos[x];[x][1:v]paletteuse"" ""{4}""", param.inputfile, tmp_palettefile, param.fps, param.width, tmp_outputfile));
+
+                // 変換が終わったら元の outputfile の場所にできあがったものをコピー（上書き）する
+                File.Copy(tmp_outputfile, param.outputfile, true);
+
+                // 仮ファイルは削除
+                File.Delete(tmp_outputfile);
+                File.Delete(tmp_palettefile);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                Log("\nError: " + ex.Message);
             }
         }
     }
