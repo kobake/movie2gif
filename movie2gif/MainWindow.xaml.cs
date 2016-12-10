@@ -46,8 +46,13 @@ namespace movie2gif
             if(ret == true)
             {
                 InputFilePath.Text = dialog.FileName;
-                OutputFilePath.Text = Regex.Replace(dialog.FileName, @"\.[A-Za-z0-9_]+$", ".gif");
+                GenerateOutputFilePath();
             }
+        }
+
+        private void GenerateOutputFilePath()
+        {
+            OutputFilePath.Text = Regex.Replace(InputFilePath.Text, @"\.[A-Za-z0-9_]+$", ".gif");
         }
 
         private void OutputFileButton_Click(object sender, RoutedEventArgs e)
@@ -64,6 +69,27 @@ namespace movie2gif
             {
                 OutputFilePath.Text = dialog.FileName;
             }
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (filenames.Length > 0)
+                {
+                    InputFilePath.Text = filenames[0];
+                    GenerateOutputFilePath();
+                }
+            }
+        }
+        private void Window_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
+                e.Effects = DragDropEffects.Copy;
+            else
+                e.Effects = DragDropEffects.None;
+            e.Handled = true;
         }
     }
 }
