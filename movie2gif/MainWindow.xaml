@@ -43,6 +43,6 @@
       </StackPanel>
       <Button x:Name="ConvertButton" Content="Convert" Margin="0,8,0,0" Height="24" Click="ConvertButton_Click"/>
     </StackPanel>
-    <TextBox Grid.Row="1" x:Name="LogText" VerticalAlignment="Stretch" Margin="0,8,0,0" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"></TextBox>
+    <TextBox Grid.Row="1" x:Name="LogText" VerticalAlignment="Stretch" Margin="0,8,0,0" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap"></TextBox>
   </Grid>
 </Window>
