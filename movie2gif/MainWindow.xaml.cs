@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using movie2gif.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,11 +30,15 @@ namespace movie2gif
             InitializeComponent();
         }
 
-        private void Log(string text)
+        private void Log(string text, bool lf = true)
         {
-            LogText.Text += text + "\n";
-            LogText.CaretIndex = LogText.Text.Length;
-            LogText.ScrollToEnd();
+            LogText.Dispatcher.Invoke(() =>
+            {
+                if (lf) text += "\n";
+                LogText.Text += text;
+                LogText.CaretIndex = LogText.Text.Length;
+                LogText.ScrollToEnd();
+            });
         }
 
         private void InputFileButton_Click(object sender, RoutedEventArgs e)
@@ -52,11 +57,6 @@ namespace movie2gif
             }
         }
 
-        private void GenerateOutputFilePath()
-        {
-            OutputFilePath.Text = Regex.Replace(InputFilePath.Text, @"\.[A-Za-z0-9_]+$", ".gif");
-        }
-
         private void OutputFileButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new SaveFileDialog();
@@ -73,6 +73,9 @@ namespace movie2gif
             }
         }
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        // ファイルドロップ受付
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
         private void Window_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -94,10 +97,24 @@ namespace movie2gif
             e.Handled = true;
         }
 
+        // 入力ファイル受付時
+        private void GenerateOutputFilePath()
+        {
+            int w = Ffmpeg.GetWidth(InputFilePath.Text);
+            if(w != 0)
+            {
+                OutputWidth.Text = w + "";
+            }
+            OutputFilePath.Text = Regex.Replace(InputFilePath.Text, @"\.[A-Za-z0-9_]+$", ".gif");
+        }
+
+
+        private bool m_doing = false;
         private void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!ConvertButton.IsEnabled) return;
+            if (m_doing || !ConvertButton.IsEnabled) return;
             ConvertButton.IsEnabled = false;
+            m_doing = true;
 
             Log("doing");
             Task.Run(()=> {
@@ -111,12 +128,26 @@ namespace movie2gif
                 }
                 finally
                 {
-                    ConvertButton.IsEnabled = true;
+                    OnConvertFinished();
                 }
-                Thread.Sleep(10);
             });
-            Log("done");
+            Task.Run(()=>{
+                while (true)
+                {
+                    Log(".", false);
+                    Thread.Sleep(500);
+                    if (!m_doing) break;
+                }
+            });
         }
+        private void OnConvertFinished()
+        {
+            ConvertButton.Dispatcher.Invoke(() => {
+                ConvertButton.IsEnabled = true;
+                m_doing = false;
+                Log("done");
+            });
+        } 
 
         private static void Convert()
         {
@@ -126,7 +157,7 @@ namespace movie2gif
             try
             {
                 ffmpeg.Invoke(@"-y -i ""C:\_tmp\New folder\a.mp4"" -vf fps=8,scale=1024:-1:flags=lanczos,palettegen ""C:\_tmp\New folder\palette.png""");
-                ffmpeg.Invoke(@"-i ""C:\_tmp\New folder\a.mp4"" -i ""C:\_tmp\New folder\palette.png"" -filter_complex ""fps=8,scale=1024:-1:flags=lanczos[x];[x][1:v]paletteuse"" ""C:\_tmp\New folder\output.gif""");
+                ffmpeg.Invoke(@"-y -i ""C:\_tmp\New folder\a.mp4"" -i ""C:\_tmp\New folder\palette.png"" -filter_complex ""fps=8,scale=1024:-1:flags=lanczos[x];[x][1:v]paletteuse"" ""C:\_tmp\New folder\output.gif""");
             }
             catch (Exception ex)
             {

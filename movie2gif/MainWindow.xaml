@@ -37,9 +37,9 @@
       </Grid>
       <StackPanel Orientation="Horizontal">
         <Label Content="FPS" VerticalAlignment="Stretch"/>
-        <TextBox  VerticalAlignment="Stretch" Text="8" Width="50" VerticalContentAlignment="Center" />
+        <TextBox x:Name="OutputFps" VerticalAlignment="Stretch" Text="8" Width="50" VerticalContentAlignment="Center" />
         <Label Content="Width" VerticalAlignment="Center" Margin="10,0,0,0"/>
-        <TextBox  VerticalAlignment="Stretch"  Text="800" Width="100" VerticalContentAlignment="Center"  />
+        <TextBox  x:Name="OutputWidth" VerticalAlignment="Stretch"  Text="800" Width="100" VerticalContentAlignment="Center"  />
       </StackPanel>
       <Button x:Name="ConvertButton" Content="Convert" Margin="0,8,0,0" Height="24" Click="ConvertButton_Click"/>
     </StackPanel>
