@@ -1,4 +1,7 @@
-﻿using Microsoft.Win32;
+﻿using MediaToolkit;
+using MediaToolkit.Model;
+using MediaToolkit.Options;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,6 +93,25 @@ namespace movie2gif
             else
                 e.Effects = DragDropEffects.None;
             e.Handled = true;
+        }
+
+        private void ConvertButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log("doing");
+            var input = new MediaFile { Filename = InputFilePath.Text };
+            var output = new MediaFile { Filename = OutputFilePath.Text };
+            var conversionOptions = new ConversionOptions
+            {
+                MaxVideoDuration = TimeSpan.FromSeconds(30),
+                VideoAspectRatio = VideoAspectRatio.R16_9,
+                VideoSize = VideoSize.Hd1080,
+                AudioSampleRate = AudioSampleRate.Hz44100
+            };
+            using (var engine = new Engine())
+            {
+                engine.Convert(input, output, conversionOptions);
+            }
+            Log("done");
         }
     }
 }
