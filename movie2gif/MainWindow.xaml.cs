@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -95,21 +96,42 @@ namespace movie2gif
 
         private void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!ConvertButton.IsEnabled) return;
+            ConvertButton.IsEnabled = false;
+
             Log("doing");
+            Task.Run(()=> {
+                try
+                {
+                    Convert();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                finally
+                {
+                    ConvertButton.IsEnabled = true;
+                }
+                Thread.Sleep(10);
+            });
+            Log("done");
+        }
+
+        private static void Convert()
+        {
             Directory.SetCurrentDirectory(@"C:\_tmp\New folder");
             Console.WriteLine(Directory.GetCurrentDirectory());
-                
             var ffmpeg = new NReco.VideoConverter.FFMpegConverter();
             try
             {
                 ffmpeg.Invoke(@"-y -i ""C:\_tmp\New folder\a.mp4"" -vf fps=8,scale=1024:-1:flags=lanczos,palettegen ""C:\_tmp\New folder\palette.png""");
-                ffmpeg.Invoke(@"-i ""C:\_tmp\New folder\a.mp4"" -i palette.png -filter_complex ""fps=8,scale=1024:-1:flags=lanczos[x];[x][1:v]paletteuse"" ""C:\_tmp\New folder\output.gif""");
+                ffmpeg.Invoke(@"-i ""C:\_tmp\New folder\a.mp4"" -i ""C:\_tmp\New folder\palette.png"" -filter_complex ""fps=8,scale=1024:-1:flags=lanczos[x];[x][1:v]paletteuse"" ""C:\_tmp\New folder\output.gif""");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
-            Log("done");
         }
     }
 }
