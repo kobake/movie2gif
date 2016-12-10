@@ -1,6 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using Accord.Video.FFMPEG;
+using MediaToolkit;
+using MediaToolkit.Model;
+using MediaToolkit.Options;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -90,6 +95,25 @@ namespace movie2gif
             else
                 e.Effects = DragDropEffects.None;
             e.Handled = true;
+        }
+
+        private void ConvertButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log("doing");
+            Directory.SetCurrentDirectory(@"C:\_tmp\New folder");
+            Console.WriteLine(Directory.GetCurrentDirectory());
+                
+            var ffmpeg = new NReco.VideoConverter.FFMpegConverter();
+            try
+            {
+                ffmpeg.Invoke(@"-y -i ""C:\_tmp\New folder\a.mp4"" -vf fps=8,scale=1024:-1:flags=lanczos,palettegen ""C:\_tmp\New folder\palette.png""");
+                ffmpeg.Invoke(@"-i ""C:\_tmp\New folder\a.mp4"" -i palette.png -filter_complex ""fps=8,scale=1024:-1:flags=lanczos[x];[x][1:v]paletteuse"" ""C:\_tmp\New folder\output.gif""");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            Log("done");
         }
     }
 }

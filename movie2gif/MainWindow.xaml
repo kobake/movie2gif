@@ -41,7 +41,7 @@
         <Label Content="Width" VerticalAlignment="Center" Margin="10,0,0,0"/>
         <TextBox  VerticalAlignment="Stretch"  Text="800" Width="100" VerticalContentAlignment="Center"  />
       </StackPanel>
-      <Button x:Name="ConvertButton" Content="Convert" Margin="0,8,0,0" Height="24" />
+      <Button x:Name="ConvertButton" Content="Convert" Margin="0,8,0,0" Height="24" Click="ConvertButton_Click"/>
     </StackPanel>
     <TextBox Grid.Row="1" x:Name="LogText" VerticalAlignment="Stretch" Margin="0,8,0,0" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"></TextBox>
   </Grid>
