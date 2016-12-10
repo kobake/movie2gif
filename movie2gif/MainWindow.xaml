@@ -27,11 +27,11 @@
 
         <Label Grid.Row="0" Grid.Column="0" x:Name="label" Content="InputMovie" VerticalAlignment="Center"/>
         <TextBox Grid.Row="0" Grid.Column="1" x:Name="InputFilePath" VerticalAlignment="Stretch" Text="...\*.mp4" />
-        <Button Grid.Row="0" Grid.Column="2" x:Name="InputFileButton" Content="..." VerticalAlignment="Stretch" />
+        <Button Grid.Row="0" Grid.Column="2" x:Name="InputFileButton" Content="..." Margin="4,0,0,0" VerticalAlignment="Stretch" Click="InputFileButton_Click" />
 
         <Label Grid.Row="2"  Grid.Column="0" x:Name="label2" Content="OutputGif" VerticalAlignment="Center"/>
         <TextBox Grid.Row="2"  Grid.Column="1" x:Name="OutputFilePath" VerticalAlignment="Stretch"  Text="...\*.gif" />
-        <Button Grid.Row="2"  Grid.Column="2" x:Name="OutputFileButton" Content="..." VerticalAlignment="Stretch"  />
+        <Button Grid.Row="2"  Grid.Column="2" x:Name="OutputFileButton" Content="..." Margin="4,0,0,0" VerticalAlignment="Stretch" Click="OutputFileButton_Click"  />
       </Grid>
       <StackPanel Orientation="Horizontal">
         <Label Content="FPS" VerticalAlignment="Stretch"/>
@@ -41,6 +41,6 @@
       </StackPanel>
       <Button x:Name="ConvertButton" Content="Convert" Margin="0,8,0,0" Height="24" />
     </StackPanel>
-    <TextBox Grid.Row="1" x:Name="LogText" VerticalAlignment="Stretch" Margin="0,8,0,0" AcceptsReturn="True" VerticalScrollBarVisibility="Visible">aaaaa</TextBox>
+    <TextBox Grid.Row="1" x:Name="LogText" VerticalAlignment="Stretch" Margin="0,8,0,0" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"></TextBox>
   </Grid>
 </Window>
