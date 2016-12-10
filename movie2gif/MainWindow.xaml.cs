@@ -5,6 +5,7 @@ using MediaToolkit.Options;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -98,34 +99,20 @@ namespace movie2gif
 
         private void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
-            if (false)
-            {
-                var input = new MediaFile { Filename = InputFilePath.Text };
-                var output = new MediaFile { Filename = OutputFilePath.Text };
-                var conversionOptions = new ConversionOptions
-                {
-                    MaxVideoDuration = TimeSpan.FromSeconds(30),
-                    VideoAspectRatio = VideoAspectRatio.R16_9,
-                    VideoSize = VideoSize.Hd1080,
-                    AudioSampleRate = AudioSampleRate.Hz44100
-                };
-                using (var engine = new Engine())
-                {
-                    engine.Convert(input, output, conversionOptions);
-                }
-            }
-            else
-            {
-                /*var source = new VideoFileSource(InputFilePath.Text);
-                source.FrameInterval = 8;
-                source.Source.
-
-                var reader = new VideoFileReader();
-                reader.FrameRate = 8;
-                reader.Open(InputFilePath.Text);
-                */
-            }
             Log("doing");
+            Directory.SetCurrentDirectory(@"C:\_tmp\New folder");
+            Console.WriteLine(Directory.GetCurrentDirectory());
+                
+            var ffmpeg = new NReco.VideoConverter.FFMpegConverter();
+            try
+            {
+                ffmpeg.Invoke(@"-y -i ""C:\_tmp\New folder\a.mp4"" -vf fps=8,scale=1024:-1:flags=lanczos,palettegen ""C:\_tmp\New folder\palette.png""");
+                ffmpeg.Invoke(@"-i ""C:\_tmp\New folder\a.mp4"" -i palette.png -filter_complex ""fps=8,scale=1024:-1:flags=lanczos[x];[x][1:v]paletteuse"" ""C:\_tmp\New folder\output.gif""");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
             Log("done");
         }
     }
