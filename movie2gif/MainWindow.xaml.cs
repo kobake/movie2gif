@@ -33,6 +33,12 @@ namespace movie2gif
             // {exeディレクトリ}/.tmp をtmpディレクトリとして扱う.
             m_tmpDirectory = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), ".tmp");
             Directory.CreateDirectory(m_tmpDirectory);
+
+            // バージョン表示
+            System.Diagnostics.FileVersionInfo ver =
+                System.Diagnostics.FileVersionInfo.GetVersionInfo(
+                System.Reflection.Assembly.GetExecutingAssembly().Location);
+            this.Title += " Ver" + ver.ProductVersion;
         }
 
         private void Log(string text, bool lf = true)
